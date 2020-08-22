@@ -1,6 +1,3 @@
-# TODO: Write documentation for `Beets`
-module Beets
-  VERSION = "0.1.0"
+require "./beets/beets"
 
-  # TODO: Put your code here
-end
+Beets.new.main
