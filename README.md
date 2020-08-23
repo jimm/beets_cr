@@ -133,13 +133,76 @@ is 120 BPM.
 clock: on
 ```
 
-If you want the MIDI START, STOP, and CLOCK messages to be sent along with
+Optional. If you want the MIDI START, STOP, and CLOCK messages to be sent along with
 the drum notes, turn the clock on. On values are "on", "yes", and "true". By
 default, those messages are not sent.
 
 ### Instrument Map
 
 TODO
+
+Optional.
+
+Names ignore case.
+
+General MIDI names are already mapped to their note numbers, but they are
+all prefixed with "gm". For example, the lowest General MIDI drum note is 35
+and its name is "Acoustic Base Drum", so Beets maps the name "GM Acoustic
+Base Drum" to note 35. Here is the default Beets instrument map:
+
+| Name                  | Note   |
+|-----------------------|--------|
+| GM Acoustic Bass Drum | 35, C  |
+| GM Bass Drum 1        | 36, C# |
+| GM Side Stick         | 37, D  |
+| GM Acoustic Snare     | 38, D# |
+| GM Hand Clap          | 39, E  |
+| GM Electric Snare     | 40, F  |
+| GM Low Floor Tom      | 41, F# |
+| GM Closed Hi Hat      | 42, G  |
+| GM High Floor Tom     | 43, G# |
+| GM Pedal Hi-Hat       | 44, A  |
+| GM Low Tom            | 45, A# |
+| GM Open Hi-Hat        | 46, B  |
+| GM Low-Mid Tom        | 47, C  |
+| GM Hi Mid Tom         | 48, C# |
+| GM Crash Cymbal 1     | 49, D  |
+| GM High Tom           | 50, D# |
+| GM Ride Cymbal 1      | 51, E  |
+| GM Chinese Cymbal     | 52, F  |
+| GM Ride Bell          | 53, F# |
+| GM Tambourine         | 54, G  |
+| GM Splash Cymbal      | 55, G# |
+| GM Cowbell            | 56, A  |
+| GM Crash Cymbal 2     | 57, A# |
+| GM Vibraslap          | 58, B  |
+| GM Ride Cymbal 2      | 59, C  |
+| GM Hi Bongo           | 60, C# |
+| GM Low Bongo          | 61, D  |
+| GM Mute Hi Conga      | 62, D# |
+| GM Open Hi Conga      | 63, E  |
+| GM Low Conga          | 64, F  |
+| GM High Timbale       | 65, F# |
+| GM Low Timbale        | 66, G  |
+| GM High Agogo         | 67, G# |
+| GM Low Agogo          | 68, A  |
+| GM Cabasa             | 69, A# |
+| GM Maracas            | 70, B  |
+| GM Short Whistle      | 71, C  |
+| GM Long Whistle       | 72, C# |
+| GM Short Guiro        | 73, D  |
+| GM Long Guiro         | 74, D# |
+| GM Claves             | 75, E  |
+| GM Hi Wood Block      | 76, F  |
+| GM Low Wood Block     | 77, F# |
+| GM Mute Cuica         | 78, G  |
+| GM Open Cuica         | 79, G# |
+| GM Mute Triangle      | 80, A  |
+| GM Open Triangle      | 81, A# |
+
+you can map any values you like
+
+general midi defines a drum kit starting at C2 (note number 35, or hex 0x23)
 
 first letters must be unique. maybe use a trie?
 

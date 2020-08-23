@@ -127,3 +127,56 @@ CM_OMNI_MODE_OFF         = 0x7C_u8 # Val must be 0
 CM_OMNI_MODE_ON          = 0x7D_u8 # Val must be 0
 CM_MONO_MODE_ON          = 0x7E_u8 # Val = # chans_u8
 CM_POLY_MODE_ON          = 0x7F_u8 # Val must be 0
+
+# GM drum notes start at 35 (C), so subtrack GM_DRUM_NOTE_LOWEST from your
+# note number before using this array.
+GM_DRUM_NOTE_LOWEST = 35
+GM_DRUM_NOTE_NAMES  = [
+  "Acoustic Bass Drum", # 35, C
+  "Bass Drum 1",        # 36, C#
+  "Side Stick",         # 37, D
+  "Acoustic Snare",     # 38, D#
+  "Hand Clap",          # 39, E
+  "Electric Snare",     # 40, F
+  "Low Floor Tom",      # 41, F#
+  "Closed Hi Hat",      # 42, G
+  "High Floor Tom",     # 43, G#
+  "Pedal Hi-Hat",       # 44, A
+  "Low Tom",            # 45, A#
+  "Open Hi-Hat",        # 46, B
+  "Low-Mid Tom",        # 47, C
+  "Hi Mid Tom",         # 48, C#
+  "Crash Cymbal 1",     # 49, D
+  "High Tom",           # 50, D#
+  "Ride Cymbal 1",      # 51, E
+  "Chinese Cymbal",     # 52, F
+  "Ride Bell",          # 53, F#
+  "Tambourine",         # 54, G
+  "Splash Cymbal",      # 55, G#
+  "Cowbell",            # 56, A
+  "Crash Cymbal 2",     # 57, A#
+  "Vibraslap",          # 58, B
+  "Ride Cymbal 2",      # 59, C
+  "Hi Bongo",           # 60, C#
+  "Low Bongo",          # 61, D
+  "Mute Hi Conga",      # 62, D#
+  "Open Hi Conga",      # 63, E
+  "Low Conga",          # 64, F
+  "High Timbale",       # 65, F#
+  "Low Timbale",        # 66, G
+  "High Agogo",         # 67, G#
+  "Low Agogo",          # 68, A
+  "Cabasa",             # 69, A#
+  "Maracas",            # 70, B
+  "Short Whistle",      # 71, C
+  "Long Whistle",       # 72, C#
+  "Short Guiro",        # 73, D
+  "Long Guiro",         # 74, D#
+  "Claves",             # 75, E
+  "Hi Wood Block",      # 76, F
+  "Low Wood Block",     # 77, F#
+  "Mute Cuica",         # 78, G
+  "Open Cuica",         # 79, G#
+  "Mute Triangle",      # 80, A
+  "Open Triangle",      # 81, A#
+]

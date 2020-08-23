@@ -1,0 +1,31 @@
+---
+name: Simple Example
+bpm: 120
+device: Kronos KEYBOARD
+channel: 10
+bank: 1
+program: 10
+clock: off
+instruments:
+  - {name: bass drum, note: 35}
+  - {name: snare, note: 37}
+  - {name: clap, note: 39}
+  - {name: closed hh, note: 44}
+  - {name: open hh, note: 46}
+patterns:
+  name: My First Pattern
+  parts:
+    - instrument: bass drum
+      notes: |
+       x... x... x... x...
+        x... x... x... x...
+        x... x... x... x...
+        x... x... x... x...
+    - instrument: snare
+      notes: |
+        (..x. ..x. ..x. ..x.) x4
+    - instrument: closed hh
+      notes: xxx xxxx x.xx xxxxx
+    - instrument: open hh
+      subdiv: 16
+      notes: ........x.......|........x.......|........x.......|........x.......
