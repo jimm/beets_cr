@@ -3,7 +3,7 @@ name: Simple Example
 bpm: 120
 device: Kronos KEYBOARD
 channel: 10
-bank: 1
+bank: {msb: 1}
 program: 10
 clock: off
 instruments:
@@ -17,7 +17,7 @@ patterns:
   parts:
     - instrument: bass drum
       notes: |
-       x... x... x... x...
+        x... x... x... x...
         x... x... x... x...
         x... x... x... x...
         x... x... x... x...
@@ -29,3 +29,5 @@ patterns:
     - instrument: open hh
       subdiv: 16
       notes: ........x.......|........x.......|........x.......|........x.......
+song:
+  - {times: 4, pattern: My First Pattern}

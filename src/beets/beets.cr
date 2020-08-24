@@ -43,7 +43,7 @@ class Beets
   # Parses command line arguments and returns an `Options` instance.
   def parse_command_line_args
     options = Options.new
-    parser = OptionParser.parse! do |parser|
+    parser = OptionParser.parse do |parser|
       parser.banner = "usage: beets [arguments] [file]"
       parser.on("-l", "--list-devices", "List MIDI devices") { options.list_devices = true }
       parser.on("-d", "--debug", "Debug output") { options.debug = true }
@@ -64,7 +64,7 @@ class Beets
         STDERR.puts "error: must specify a beets file"
         exit(1)
       end
-      options.beets_file = ARGV[0]
+      options.beets_path = ARGV[0]
     end
     options
   end
