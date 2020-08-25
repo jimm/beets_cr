@@ -1,18 +1,18 @@
 ---
-name: Simple Example
-bpm: 120
-channel: 10
+name: Test File
+bpm: 86.8
+channel: 2
 device: MidiPipe Input 1
 bank: {msb: 1}
 program: 10
-clock: off
+clock: on
 instruments:
   - {name: bass drum, note: 36}
   - {name: snare, note: 38}
   - {name: clap, note: 39}
 patterns:
   - name: My First Pattern
-    timesig: 4/4
+    timesig: 3/4
     bars: 4
     parts:
       - instrument: bass drum

@@ -46,6 +46,11 @@ Finally, run `beets` and give it the file you've created.
   bin/beets my_beets_file.txt
 ```
 
+### Options
+
+Run `bin/beets -h` or `bin/beets --help` to see the list of arguments. The
+`--output` and `--channel` arguments override whatever is in the Beets file.
+
 ## Beets Files
 
 A Beets file describes everything needed to play a song which consists of
@@ -254,6 +259,10 @@ TODO
 ### Song
 
 TODO
+
+## To Do
+
+- time signature per pattern, default is 4/4
 
 ## Development
 

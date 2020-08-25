@@ -1,18 +1,31 @@
-require "yaml"
-require "port_midi"
+NANOSECS_PER_SEC = 1_000_000_000
 
-# This is how long we wait before waking up to see if there is more work.
-# MIDI clocks run at 24 tics per beat. Let's say our maximum allowed BPM is
-# 240. That's four beats per second, which is 96 tics per second. We want to
-# at least double that (Nyquist frequency!) so let's say 200 wake-ups per
-# second. That's 5 millisecs or 5,000,000 nanoseconds per wake-up.
-WAIT_NANOSECS = 5_000_000
+class TimeSignature
+  property beats_per_bar : Int32 = 4
+  property beat_unit : Int32 = 4 # 1 = whole, 8 = eighth
+end
 
 class Pattern
+  property name : String
+  property time_signature : TimeSignature = TimeSignature.new
+  property num_bars : Int32
+  property notes : Array(Array(UInt8))
+
+  def initialize(@name, @num_bars)
+    # FIXME hard-coded number of beats per bar
+    @notes = Array.new(ticks_length) { |a| a = [] of UInt8 }
+  end
+
+  def ticks_length
+    @num_bars * 4 * TICKS_PER_BEAT
+  end
 end
 
 class Chunk
-  def initialize(@pattern : Pattern, @play_times : Int32)
+  property pattern : Pattern
+  property play_times : Int32
+
+  def initialize(@pattern, @play_times)
   end
 end
 
@@ -26,54 +39,58 @@ class Player
   property output_clock : Bool = false
   property instruments : Hash(String, UInt8) = {} of String => UInt8
   property patterns : Array(Pattern) = [] of Pattern
-  property arrangement : Array(Chunk)
-
-  # Parses `path` and returns a Player.
-  def self.from_file(path)
-    yaml = File.open(path) { |file| YAML.parse(file) }
-    device_id = find_device_id(yaml["device"])
-
-    player = Player.new(OutputStream.open(device_id))
-    player.song_name = yaml["name"].as_s
-    player.bpm = yaml["bpm"].as_f if yaml["bpm"]
-    player.channel = yaml["channel"] ? yaml["channel"].as_i.to_u8 - 1_u8 : 9_u8
-    bank = yaml["bank"]
-    if bank
-      player.bank_msb = bank["msb"].as_i.to_u8
-      player.bank_lsb = bank["lsb"].as_i.to_u8
-    end
-    player.program = yaml["program"].as_i.to_u8 if yaml["program"]
-    player.output_clock = yaml["clock"].as_bool if yaml["clock"]
-    instruments = yaml["instruments"]
-    if instruments
-      instruments.as_a.each do |inst|
-        player.instruments[inst["name"].as_s] = inst["note"].as_i.to_u8
-      end
-    end
-
-    # TODO patterns
-
-    song.as_a.each do |chunk|
-      arrangement << Chunk.new(find_pattern(chunk["pattern"].as_s), chunk["times"].as_i)
-    end
-
-    puts player # DEBUG
-    player
-  end
-
-  def self.find_device_id(name_or_id) : Int32
-    output_devices = (0...PortMIDI.count_devices)
-      .map { |i| PortMIDI.get_device_info(i) }
-      .select!(&.input?)
-    name_matches = output_devices.dup.select! { |dev| dev.name.downcase == name_or_id }
-    name_matches.size == 1 ? output_devices.index(name_matches[0]).as(Int32) : name_or_id.to_s.to_i
-  end
+  property chunks : Array(Chunk) = [] of Chunk
 
   def initialize(@output_stream : OutputStream)
   end
 
   def play
-    wait_span = Time::Span.new(nanoseconds: WAIT_NANOSECS)
-    # sleep(wait_span)
+    tick_span = Time::Span.new(nanoseconds: (NANOSECS_PER_SEC / (bpm * 24.0 / 60.0)).to_i64)
+    note_off_span = Time::Span.new(nanoseconds: 3000)
+    on_status = NOTE_ON + channel
+    off_status = NOTE_OFF + channel
+
+    chunks.each do |chunk|
+      pattern = chunk.pattern
+      chunk.play_times.times do |_|
+        start_nanosecs = Time.monotonic
+
+        t = start_nanosecs
+        pattern.notes.each do |notes|
+          if notes.empty?
+            t += tick_span
+            next
+          end
+
+          wait_until(t)
+          # FIXME velocities
+          notes.each { |note| @output_stream.write_short(on_status, note, 127) }
+          wait_until(t + note_off_span) # wait one millisecond then send note off
+          notes.each { |note| @output_stream.write_short(off_status, note, 127) }
+
+          t += tick_span
+        end
+
+        # Wait for end of full length of pattern
+        wait_until(start_nanosecs + tick_span * pattern.ticks_length)
+      end
+    end
+  end
+
+  def wait_until(goal_time : Time::Span)
+    now = Time.monotonic
+    return if now >= goal_time
+    sleep(goal_time - now)
+  end
+
+  def instrument_note_number(name)
+    name = name.downcase
+    GM_DRUM_NOTE_NAMES.each_with_index do |gm_name, i|
+      return (i + GM_DRUM_NOTE_LOWEST).to_u8 if "gm #{gm_name}".downcase == name
+    end
+    instruments.keys.each do |inst_name|
+      return instruments[inst_name] if inst_name.downcase == name
+    end
+    raise "can not find instrument named #{name}"
   end
 end

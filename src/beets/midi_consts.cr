@@ -1,7 +1,9 @@
 # MIDI constants.
 
-MIDI_CHANNELS     =  16 # Number of MIDI channels
-NOTES_PER_CHANNEL = 128 # Number of note per MIDI channel
+MIDI_CHANNELS        =   16 # Number of MIDI channels
+NOTES_PER_CHANNEL    =  128 # Number of note per MIDI channel
+TICKS_PER_BEAT       =   24
+DEFAULT_DRUM_CHANNEL = 9_u8
 
 # Channel messages
 
@@ -139,7 +141,7 @@ GM_DRUM_NOTE_NAMES  = [
   "Hand Clap",          # 39, E
   "Electric Snare",     # 40, F
   "Low Floor Tom",      # 41, F#
-  "Closed Hi Hat",      # 42, G
+  "Closed Hi-Hat",      # 42, G
   "High Floor Tom",     # 43, G#
   "Pedal Hi-Hat",       # 44, A
   "Low Tom",            # 45, A#

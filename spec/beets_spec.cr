@@ -1,9 +1,6 @@
 require "./spec_helper"
+require "../src/beets/beets"
 
 describe Beets do
   # TODO: Write tests
-
-  it "works" do
-    false.should eq(true)
-  end
 end
