@@ -28,13 +28,14 @@ class Beets
       else
         run()
       end
-      PortMIDI.terminate
     rescue ex
       STDERR.puts ex.message
       if options.debug
         puts ex.backtrace.join("\n")
       end
       exit(1)
+    ensure
+      PortMIDI.terminate
     end
   end
 

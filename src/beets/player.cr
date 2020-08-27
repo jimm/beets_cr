@@ -5,6 +5,8 @@ class TimeSignature
   property beat_unit : Int32 = 4 # 1 = whole, 8 = eighth
 end
 
+# Notes may be accented or unaccented. Unaccented note numbers are unchanged
+# MIDI note numbers. Accented note numbers have their high eighth bit set.
 class Pattern
   property name : String
   property time_signature : TimeSignature = TimeSignature.new
@@ -63,10 +65,9 @@ class Player
           end
 
           wait_until(t)
-          # FIXME velocities
-          notes.each { |note| @output_stream.write_short(on_status, note, 127) }
+          notes.each { |note| @output_stream.write_short(on_status, unaccented(note), velocity(note)) }
           wait_until(t + note_off_span) # wait one millisecond then send note off
-          notes.each { |note| @output_stream.write_short(off_status, note, 127) }
+          notes.each { |note| @output_stream.write_short(off_status, unaccented(note), 0) }
 
           t += tick_span
         end
@@ -81,6 +82,22 @@ class Player
     now = Time.monotonic
     return if now >= goal_time
     sleep(goal_time - now)
+  end
+
+  def accented(note_num)
+    note_num | 0x80
+  end
+
+  def unaccented(note_num)
+    note_num & 0x7f
+  end
+
+  def accented?(note_num)
+    (note_num & 0x80) != 0
+  end
+
+  def velocity(note_num)
+    accented?(note_num) ? 127_u8 : 64_u8
   end
 
   def instrument_note_number(name)

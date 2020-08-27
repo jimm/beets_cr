@@ -53,10 +53,10 @@ describe Loader do
     pat.time_signature.beat_unit.should eq 4
     pat.num_bars.should eq 4
 
-    pat.notes[0].should eq [36, 42]
+    pat.notes[0].should eq [36, 42 + 0x80] # second note is accented
     pat.notes[1].should be_empty
-    pat.notes[TICKS_PER_BEAT].should eq [38, 42]
-    pat.notes[TICKS_PER_BEAT * 3].should eq [38, 46]
+    pat.notes[TICKS_PER_BEAT].should eq [38, 42 + 0x80]
+    pat.notes[TICKS_PER_BEAT * 3].should eq [38, 46 + 0x80]
 
     player.chunks.size.should eq 1
     chunk = player.chunks[0]

@@ -31,16 +31,16 @@ patterns:
       - instrument: gm closed hi-hat
         subdiv: 8
         notes: |
-          xx xx xx .x
-          xx xx xx .x
-          xx xx xx .x
-          xx xx xx .x
+          Xx Xx Xx .x
+          Xx Xx Xx .x
+          Xx Xx Xx .x
+          Xx Xx Xx .x
       - instrument: gm open hi-hat
         subdiv: 8
         notes: |
-          .. .. .. x.
-          .. .. .. x.
-          .. .. .. x.
-          .. .. .. x.
+          .. .. .. X.
+          .. .. .. X.
+          .. .. .. X.
+          .. .. .. X.
 song:
   - {times: 4, pattern: My First Pattern}
