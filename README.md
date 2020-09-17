@@ -247,13 +247,49 @@ patterns:
 
 TODO finish writing this section
 
+Required. The `patterns` section consists of one or more drum patterns that
+plays zero or more parts (instruments). The length of the pattern is
+pre-determined, but a pattern can be played more than once (see the "Song"
+section below).
+
+### Pattern
+
+```
+  - name: Intro
+    timesig: 4/4
+    bars: 4
+    parts:
+      - instrument: bass drum
+        notes: x.x. x.x. x.x. x.x.
+      - instrument: snare
+        subdiv: 16
+        notes: |
+          .... x... .... x...
+          .... x... .... x.xx
+          .... x... .... x...
+          .... x... .... x.xx
+```
+
+Optional. A pattern consists of the following fields.
+
+#### Name
+
+Optional string.
+
+#### Timesig
+
+Optional. Default is 4/4.
+
+#### Bars
+
 Required.
 
 #### Parts
 
 TODO improve note entry!!!
 
-Each instrument in a pattern has its own section. It starts with the name of
+Each instrument in a pattern has its own section consisting of the
+instrument name, optional subdiv (default is 4, or quarter note)
 the instrument and continues until the next instrument starts, the next
 pattern starts, or the song starts. As a shortcut, you can use the unique
 prefix of the instrument name. For example, if "bass drum" is the only
