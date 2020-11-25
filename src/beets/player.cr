@@ -70,6 +70,6 @@ class Player
   end
 
   def velocity(note_num)
-    accented?(note_num) ? 127_u8 : 64_u8
+    accented?(note_num) ? 0x7f_u8 : 0x50_u8
   end
 end

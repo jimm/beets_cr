@@ -114,28 +114,27 @@ class Loader
     raise "song: did not find pattern named #{pattern_name}"
   end
 
+  protected def output_stream_from(device_id : Int32)
+    OutputStream.open(device_id)
+  end
+
   protected def output_stream_from(name : String)
     begin
-      device_id = name.to_i
-      return OutputStream.open(device_id)
+      return output_stream_from(name.to_i)
     rescue
-      devices = (0...PortMIDI.count_devices)
-        .map { |i| PortMIDI.get_device_info(i) }
-      name = name.downcase
-      name_matches = devices.dup.select! { |dev| dev.name.downcase == name }
-      if name_matches.size == 1
-        return OutputStream.open(devices.index(name_matches[0]).as(Int32))
-      end
-      raise "error: no PortMIDI device named #{name}"
     end
+
+    devices = (0...PortMIDI.count_devices)
+      .map { |i| PortMIDI.get_device_info(i) }
+    name = name.downcase
+    name_matches = devices.dup.select! { |dev| dev.name.downcase == name }
+    if name_matches.size == 1
+      return output_stream_from(devices.index(name_matches[0]).as(Int32))
+    end
+    raise "error: no PortMIDI device named #{name}"
   end
 
   protected def output_stream_from(name_or_id : YAML::Any) : OutputStream
-    return output_stream_from(name_or_id) if name_or_id.is_a?(String)
-    begin
-      return OutputStream.open(name_or_id.as_i)
-    rescue
-      return output_stream_from(name_or_id.as_s)
-    end
+    return output_stream_from(name_or_id.as_s)
   end
 end
