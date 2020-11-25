@@ -330,3 +330,34 @@ TODO: Write development instructions here
 ## Contributors
 
 - [Jim Menard](https://github.com/jimm) - creator and maintainer
+
+# Notes / GUI
+
+## Recording
+
+### global
+
+bpm / tempo
+time sig
+num measures
+
+define kit: name and note number per key
+
+assign keys to drums
+
+### single pattern
+
+name the pattern (default name is "Pattern N")
+
+start recording
+tap to record a note
+tap 'erase' button to start erasing whatever notes are held down
+
+quantize to 16th, adjustable
+quantize on the fly
+
+velocity??? shift and control?
+
+### chunks
+
+double click left list of patterns to copy pattern to right side

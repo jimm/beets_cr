@@ -44,7 +44,7 @@ describe Loader do
     player.bank_lsb.should be_nil
     player.program.should eq 10
     player.output_clock.should be_true
-    player.instruments["bass drum"].should eq 36
+    player.drum_kit.instruments["bass drum"].should eq 36
 
     player.patterns.size.should eq 1
     pat = player.patterns[0]

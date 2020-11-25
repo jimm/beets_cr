@@ -23,8 +23,9 @@ class Loader
 
     instruments = yaml["instruments"]?
     if instruments
+      kit = @player.drum_kit
       instruments.as_a.each do |inst|
-        @player.instruments[inst["name"].as_s] = inst["note"].as_i.to_u8
+        kit.add_instrument(inst["name"].as_s, inst["note"].as_i.to_u8)
       end
     end
 
@@ -82,7 +83,7 @@ class Loader
 
       @player.patterns << pattern
       pat["parts"].as_a.each do |part|
-        note_num = @player.instrument_note_number(part["instrument"].as_s)
+        note_num = @player.drum_kit.instrument_note_number(part["instrument"].as_s)
         val = part["subdiv"]?
         subdiv = val ? val.as_i : 4
         load_notes(pattern, subdiv, note_num, part["notes"].as_s)
@@ -114,14 +115,19 @@ class Loader
   end
 
   protected def output_stream_from(name : String)
-    devices = (0...PortMIDI.count_devices)
-      .map { |i| PortMIDI.get_device_info(i) }
-    name = name.downcase
-    name_matches = devices.dup.select! { |dev| dev.name.downcase == name }
-    if name_matches.size == 1
-      return OutputStream.open(devices.index(name_matches[0]).as(Int32))
+    begin
+      device_id = name.to_i
+      return OutputStream.open(device_id)
+    rescue
+      devices = (0...PortMIDI.count_devices)
+        .map { |i| PortMIDI.get_device_info(i) }
+      name = name.downcase
+      name_matches = devices.dup.select! { |dev| dev.name.downcase == name }
+      if name_matches.size == 1
+        return OutputStream.open(devices.index(name_matches[0]).as(Int32))
+      end
+      raise "error: no PortMIDI device named #{name}"
     end
-    raise "error: no PortMIDI device named #{name}"
   end
 
   protected def output_stream_from(name_or_id : YAML::Any) : OutputStream

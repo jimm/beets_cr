@@ -1,35 +1,8 @@
+require "./chunk"
+require "./pattern"
+require "./drum_kit"
+
 NANOSECS_PER_SEC = 1_000_000_000
-
-class TimeSignature
-  property beats_per_bar : Int32 = 4
-  property beat_unit : Int32 = 4 # 1 = whole, 8 = eighth
-end
-
-# Notes may be accented or unaccented. Unaccented note numbers are unchanged
-# MIDI note numbers. Accented note numbers have their high eighth bit set.
-class Pattern
-  property name : String
-  property time_signature : TimeSignature = TimeSignature.new
-  property num_bars : Int32
-  property notes : Array(Array(UInt8))
-
-  def initialize(@name, @num_bars)
-    # FIXME hard-coded number of beats per bar
-    @notes = Array.new(ticks_length) { |a| a = [] of UInt8 }
-  end
-
-  def ticks_length
-    @num_bars * 4 * TICKS_PER_BEAT
-  end
-end
-
-class Chunk
-  property pattern : Pattern
-  property play_times : Int32
-
-  def initialize(@pattern, @play_times)
-  end
-end
 
 class Player
   property song_name : String?
@@ -39,7 +12,7 @@ class Player
   property bank_lsb : UInt8?
   property program : UInt8??
   property output_clock : Bool = false
-  property instruments : Hash(String, UInt8) = {} of String => UInt8
+  property drum_kit : DrumKit = DrumKit.new
   property patterns : Array(Pattern) = [] of Pattern
   property chunks : Array(Chunk) = [] of Chunk
 
@@ -98,16 +71,5 @@ class Player
 
   def velocity(note_num)
     accented?(note_num) ? 127_u8 : 64_u8
-  end
-
-  def instrument_note_number(name)
-    name = name.downcase
-    GM_DRUM_NOTE_NAMES.each_with_index do |gm_name, i|
-      return (i + GM_DRUM_NOTE_LOWEST).to_u8 if "gm #{gm_name}".downcase == name
-    end
-    instruments.keys.each do |inst_name|
-      return instruments[inst_name] if inst_name.downcase == name
-    end
-    raise "can not find instrument named #{name}"
   end
 end
