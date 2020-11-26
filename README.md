@@ -315,6 +315,8 @@ TODO
 
 - time signature per pattern, default is 4/4
 
+- bpm per chunk or even as a special part instrument so it can change over time?
+
 ## Development
 
 TODO: Write development instructions here
@@ -331,11 +333,11 @@ TODO: Write development instructions here
 
 - [Jim Menard](https://github.com/jimm) - creator and maintainer
 
-# Notes / GUI
+## Notes / GUI
 
-## Recording
+### Recording
 
-### global
+#### global
 
 bpm / tempo
 time sig
@@ -345,7 +347,7 @@ define kit: name and note number per key
 
 assign keys to drums
 
-### single pattern
+#### single pattern
 
 name the pattern (default name is "Pattern N")
 
@@ -358,6 +360,6 @@ quantize on the fly
 
 velocity??? shift and control?
 
-### chunks
+#### chunks
 
 double click left list of patterns to copy pattern to right side

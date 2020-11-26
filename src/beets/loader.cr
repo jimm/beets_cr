@@ -14,7 +14,7 @@ class Loader
 
     @player = Player.new(output_stream_from(device_name_or_id || yaml["device"]))
     @player.song_name = yaml["name"].as_s
-    @player.bpm = load_bpm(yaml, bpm)
+    @player.clock.bpm = load_bpm(yaml, bpm)
     @player.channel = load_channel(yaml, channel)
     @player.bank_msb, @player.bank_lsb, @player.program = *load_bank_and_pc(yaml)
 
@@ -98,7 +98,7 @@ class Loader
     notes.gsub(/[^\.xX]/, "").each_char do |note|
       case note
       when 'x'
-        pattern.notes[offset] << note_num
+        pattern.notes[offset] << @player.unaccented(note_num)
       when 'X'
         pattern.notes[offset] << @player.accented(note_num)
       end

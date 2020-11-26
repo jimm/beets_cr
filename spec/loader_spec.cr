@@ -38,7 +38,7 @@ describe Loader do
   it "loads the simple example properly" do
     player = TestLoader.new.load(TESTFILE, nil, nil, nil)
     player.song_name.should eq "Test File"
-    player.bpm.should eq 86.8
+    player.clock.bpm.should eq 86.8
     player.channel.should eq 1
     player.bank_msb.should eq 1
     player.bank_lsb.should be_nil
@@ -74,7 +74,7 @@ describe Loader do
     tmpfile.rewind
 
     player = TestLoader.new.load(tmpfile.path, nil, nil, nil)
-    player.bpm.should eq 120.0
+    player.clock.bpm.should eq 120.0
     player.channel.should eq DEFAULT_DRUM_CHANNEL
     player.bank_msb.should be_nil
     player.bank_lsb.should be_nil
@@ -87,6 +87,6 @@ describe Loader do
   it "uses overrides passed in to load" do
     player = TestLoader.new.load(TESTFILE, nil, 3, nil)
     player.channel.should eq 3
-    player.bpm.should eq 86.8
+    player.clock.bpm.should eq 86.8
   end
 end
