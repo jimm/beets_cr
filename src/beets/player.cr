@@ -1,6 +1,7 @@
 require "./chunk"
 require "./pattern"
 require "./drum_kit"
+require "./midi_consts"
 
 NANOSECS_PER_SEC = 1_000_000_000
 
@@ -25,6 +26,7 @@ class Player
     on_status = NOTE_ON + channel
     off_status = NOTE_OFF + channel
 
+    @output_stream.write_short(START) if output_clock
     chunks.each do |chunk|
       pattern = chunk.pattern
       chunk.play_times.times do |_|
@@ -32,17 +34,19 @@ class Player
 
         t = start_nanosecs
         pattern.notes.each do |notes|
+          @output_stream.write_short(CLOCK) if output_clock
           if notes.empty?
             t += tick_span
             next
           end
 
-          wait_until(t)
+          wait_until(t, tick_span)
           notes.each { |note| @output_stream.write_short(on_status, unaccented(note), velocity(note)) }
           wait_until(t + note_off_span) # wait one millisecond then send note off
           notes.each { |note| @output_stream.write_short(off_status, unaccented(note), 0) }
 
           t += tick_span
+          @output_stream.write_short(CLOCK) if output_clock
         end
 
         # Wait for end of full length of pattern
@@ -51,10 +55,12 @@ class Player
     end
   end
 
-  def wait_until(goal_time : Time::Span)
+  def wait_until(goal_time : Time::Span, tick_span : Time::Span)
     now = Time.monotonic
-    return if now >= goal_time
-    sleep(goal_time - now)
+    while now < goal_time
+      sleep(tick_span)
+      @output_stream.write_short(CLOCK) if output_clock
+    end
   end
 
   def accented(note_num)
