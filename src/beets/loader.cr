@@ -107,11 +107,11 @@ class Loader
   end
 
   private def find_pattern(pattern_name)
-    pattern_name = pattern_name.downcase
+    compare_pattern_name = pattern_name.downcase
     @player.patterns.each do |pat|
-      return pat if pat.name.downcase == pattern_name
+      return pat if pat.name.downcase == compare_pattern_name
     end
-    raise "song: did not find pattern named #{pattern_name}"
+    raise "song: did not find pattern named #{pattern_name} (available: #{@player.patterns.map(&.name).join(", ")})"
   end
 
   protected def output_stream_from(device_id : Int32)
