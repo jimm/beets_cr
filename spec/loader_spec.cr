@@ -38,13 +38,13 @@ describe Loader do
   it "loads the simple example properly" do
     player = TestLoader.new.load(TESTFILE, nil, nil, nil)
     player.song_name.should eq "Test File"
-    player.bpm.should eq 86.8
+    player.clock.bpm.should eq 86.8
     player.channel.should eq 1
     player.bank_msb.should eq 1
     player.bank_lsb.should be_nil
     player.program.should eq 10
     player.output_clock.should be_true
-    player.instruments["bass drum"].should eq 36
+    player.drum_kit.instruments["bass drum"].should eq 36
 
     player.patterns.size.should eq 1
     pat = player.patterns[0]
@@ -53,10 +53,10 @@ describe Loader do
     pat.time_signature.beat_unit.should eq 4
     pat.num_bars.should eq 4
 
-    pat.notes[0].should eq [36, 42]
+    pat.notes[0].should eq [36, 42 + 0x80] # second note is accented
     pat.notes[1].should be_empty
-    pat.notes[TICKS_PER_BEAT].should eq [38, 42]
-    pat.notes[TICKS_PER_BEAT * 3].should eq [38, 46]
+    pat.notes[TICKS_PER_BEAT].should eq [38, 42 + 0x80]
+    pat.notes[TICKS_PER_BEAT * 3].should eq [38, 46 + 0x80]
 
     player.chunks.size.should eq 1
     chunk = player.chunks[0]
@@ -74,7 +74,7 @@ describe Loader do
     tmpfile.rewind
 
     player = TestLoader.new.load(tmpfile.path, nil, nil, nil)
-    player.bpm.should eq 120.0
+    player.clock.bpm.should eq 120.0
     player.channel.should eq DEFAULT_DRUM_CHANNEL
     player.bank_msb.should be_nil
     player.bank_lsb.should be_nil
@@ -87,6 +87,6 @@ describe Loader do
   it "uses overrides passed in to load" do
     player = TestLoader.new.load(TESTFILE, nil, 3, nil)
     player.channel.should eq 3
-    player.bpm.should eq 86.8
+    player.clock.bpm.should eq 86.8
   end
 end

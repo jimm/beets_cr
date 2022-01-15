@@ -28,13 +28,14 @@ class Beets
       else
         run()
       end
-      PortMIDI.terminate
     rescue ex
       STDERR.puts ex.message
       if options.debug
         puts ex.backtrace.join("\n")
       end
       exit(1)
+    ensure
+      PortMIDI.terminate
     end
   end
 
@@ -50,10 +51,18 @@ class Beets
   def parse_command_line_args
     parser = OptionParser.parse do |parser|
       parser.banner = "usage: beets [arguments] [file]"
-      parser.on("-l", "--list-devices", "List MIDI devices") { @options.list_devices = true }
-      parser.on("-o DEVICE", "--output DEVICE", "Output MIDI device name or id") { |arg| @options.device_name_or_id = arg }
-      parser.on("-c CHAN", "--channel CHAN", "Output MIDI channel") { |arg| @options.channel = arg.to_u8 - 1 }
-      parser.on("-b BPM", "--bpm BPM", "Beats per minute") { |arg| @options.bpm = arg.to_f64 }
+      parser.on("-l", "--list-devices",
+        "List MIDI devices") { @options.list_devices = true }
+      parser.on("-o OUTPUT", "--output=OUTPUT",
+        "Output MIDI device name or id") { |arg|
+        @options.device_name_or_id = arg
+      }
+      parser.on("-c CHANNEL", "--channel=CHANNEL",
+        "Output MIDI channel") { |arg|
+        @options.channel = arg.to_u8 - 1
+      }
+      parser.on("-b BPM", "--bpm=BPM",
+        "Beats per minute") { |arg| @options.bpm = arg.to_f64 }
       parser.on("-d", "--debug", "Debug output") { @options.debug = true }
       parser.on("-h", "--help", "Show this help") do
         help(parser)

@@ -1,12 +1,14 @@
 # Beets
 
-Beets is a MIDI drum machine that is driven by text files.
+Beets is a MIDI drum machine that is driven by text files. It works fine but
+is fairly inflexible right now: all parts are quantized by default with no
+way to humanize anything.
 
-Bard is written in [Crystal](https://crystal-lang.org).
+Beets is written in [Crystal](https://crystal-lang.org).
 
 ## Installation
 
-First, install the packages needed to compile the `bard` application.
+First, install the packages needed to compile the `beets` application.
 
 ```sh
 brew install crystal
@@ -43,7 +45,7 @@ device name or number is in the file. See the example files in the
 Finally, run `beets` and give it the file you've created.
 
 ```sh
-  bin/beets my_beets_file.txt
+bin/beets my_beets_file.txt
 ```
 
 ### Options
@@ -53,8 +55,8 @@ Run `bin/beets -h` or `bin/beets --help` to see the list of arguments. The
 
 ## Beets Files
 
-A Beets file describes everything needed to play a song which consists of
-possibly repeated drum patterns.
+A Beets file is a [YAML](https://yaml.org/) file. It describes everything
+needed to play a song which consists of possibly repeated drum patterns.
 
 The start of the file defines which MIDI device to use and how to configure
 it, the BPM of the song (right now tempo changes are not supported), and
@@ -72,13 +74,30 @@ instruments.
 At the end of the file is the song. It defines which patterns to play in
 what order, including repeats.
 
-Comments can appear anywhere in a Beets file. Comments start with '#' and
-continue to the end of the line. Comments and blank lines are ignored.
+Comments can appear anywhere in a Beets file. Comments are lines that start
+with '#' and continue to the end of the line. Comments are ignored.
 
 ### Setup
 
-The setup section consists of a number of lines of the form "name: value".
-The section is ended when the first pattern is seen.
+These are the fields that make up the "setup" of a Beets YAML file.
+
+#### name
+
+```
+name: My Cool Drum Sequence
+```
+
+Optional. The sequence name isn't displayed anywhere.
+
+#### bpm
+
+```
+bpm: 120
+bpm: 88.5
+```
+
+Optional. A floating-point number, but the decimal is optional. The default
+is 120 BPM.
 
 #### device
 
@@ -122,16 +141,6 @@ program: 42
 
 Optional. The program number must be 0-127.
 
-#### bpm
-
-```
-bpm: 120
-bpm: 88.5
-```
-
-Optional. A floating-point number, but the decimal is optional. The default
-is 120 BPM.
-
 #### clock
 
 ```
@@ -144,16 +153,19 @@ default, those messages are not sent.
 
 ### Instrument Map
 
-TODO
+```
+instruments:
+  - {name: bass drum, note: 36}
+  - {name: snare, note: 38}
+```
 
-Optional.
+Optional. Adds mappings from instrument names to MIDI note numbers to the
+ones already defined by Beets. Instrument names are case-insensitive.
 
-Names ignore case.
-
-General MIDI names are already mapped to their note numbers, but they are
-all prefixed with "gm". For example, the lowest General MIDI drum note is 35
-and its name is "Acoustic Base Drum", so Beets maps the name "GM Acoustic
-Base Drum" to note 35. Here is the default Beets instrument map:
+Beets maps all of the General MIDI drum note names to their numbers, but
+they are all prefixed with "gm". For example, the lowest General MIDI drum
+note is 35 and its name is "Acoustic Base Drum", so Beets maps the name "GM
+Acoustic Base Drum" to note 35. Here is the default Beets instrument map:
 
 | Name                  | Note   |
 |-----------------------|--------|
@@ -164,7 +176,7 @@ Base Drum" to note 35. Here is the default Beets instrument map:
 | GM Hand Clap          | 39, E  |
 | GM Electric Snare     | 40, F  |
 | GM Low Floor Tom      | 41, F# |
-| GM Closed Hi Hat      | 42, G  |
+| GM Closed Hi-Hat      | 42, G  |
 | GM High Floor Tom     | 43, G# |
 | GM Pedal Hi-Hat       | 44, A  |
 | GM Low Tom            | 45, A# |
@@ -205,40 +217,79 @@ Base Drum" to note 35. Here is the default Beets instrument map:
 | GM Mute Triangle      | 80, A  |
 | GM Open Triangle      | 81, A# |
 
-you can map any values you like
-
-general midi defines a drum kit starting at C2 (note number 35, or hex 0x23)
-
-first letters must be unique. maybe use a trie?
+(Note that the offical MIDI spec calls note 42 "Closed Hi Hat", but all the
+other hi hat note names use a dash, such as "Open Hi-Hat". As shown in the
+table above, Beets calls note 42 "GM Closed Hi-Hat", with the dash.)
 
 ### Patterns
 
 ```
-pattern: Intro
+patterns:
+  - name: Intro
+    timesig: 4/4
+    bars: 4
+    parts:
+      - instrument: bass drum
+        notes: x.x. x.x. x.x. x.x.
+      - instrument: snare
+        subdiv: 16
+        notes: |
+          .... x... .... x...
+          .... x... .... x.xx
+          .... x... .... x...
+          .... x... .... x.xx
+  - name: Verse
+    bars: 16
+    parts:
+      - instrument: bass drum
+        ...
 ```
 
-Patterns can have any name you want. Any text after "pattern:" becomes the
-pattern name. Any text between here and the next "pattern:" or "song:"
-belongs to this pattern.
+TODO finish writing this section
 
-#### Instruments
+Required. The `patterns` section consists of one or more drum patterns that
+plays zero or more parts (instruments). The length of the pattern is
+pre-determined, but a pattern can be played more than once (see the "Song"
+section below).
+
+### Pattern
 
 ```
-bass drum
-x...x...x...x...
-
-qx... x... x... x...
-
-
-snare
-q..x. ..x. ..x.
-# after the first two quarter not tests, four eighths
-..exxx
+  - name: Intro
+    timesig: 4/4
+    bars: 4
+    parts:
+      - instrument: bass drum
+        notes: x.x. x.x. x.x. x.x.
+      - instrument: snare
+        subdiv: 16
+        notes: |
+          .... x... .... x...
+          .... x... .... x.xx
+          .... x... .... x...
+          .... x... .... x.xx
 ```
+
+Optional. A pattern consists of the following fields.
+
+#### Name
+
+Optional string.
+
+#### Timesig
+
+Optional. Default is 4/4.
+
+#### Bars
+
+Required.
+
+#### Parts
 
 TODO improve note entry!!!
 
-Each instrument in a pattern has its own section. It starts with the name of
+Each instrument in a pattern has its own section consisting of the
+instrument name, optional subdiv (default is 4, or quarter note)
 the instrument and continues until the next instrument starts, the next
 pattern starts, or the song starts. As a shortcut, you can use the unique
 prefix of the instrument name. For example, if "bass drum" is the only
@@ -264,13 +315,15 @@ TODO
 
 - time signature per pattern, default is 4/4
 
+- bpm per chunk or even as a special part instrument so it can change over time?
+
 ## Development
 
 TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/beets/fork>)
+1. Fork it (<https://github.com/jimm/beets/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -279,3 +332,34 @@ TODO: Write development instructions here
 ## Contributors
 
 - [Jim Menard](https://github.com/jimm) - creator and maintainer
+
+## Notes / GUI
+
+### Recording
+
+#### global
+
+bpm / tempo
+time sig
+num measures
+
+define kit: name and note number per key
+
+assign keys to drums
+
+#### single pattern
+
+name the pattern (default name is "Pattern N")
+
+start recording
+tap to record a note
+tap 'erase' button to start erasing whatever notes are held down
+
+quantize to 16th, adjustable
+quantize on the fly
+
+velocity??? shift and control?
+
+#### chunks
+
+double click left list of patterns to copy pattern to right side

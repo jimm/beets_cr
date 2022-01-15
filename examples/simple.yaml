@@ -29,18 +29,18 @@ patterns:
           .... x... .... x...
           .... x... .... x.xx
       - instrument: gm closed hi-hat
-        subdiv: 8
+        subdiv: 16
         notes: |
-          xx xx xx .x
-          xx xx xx .x
-          xx xx xx .x
-          xx xx xx .x
+          XxXx XxXx XxXx .xXx 
+          XxXx XxXx XxXx .xXx 
+          XxXx XxXx XxXx .xXx 
+          XxXx XxXx XxXx .xXx 
       - instrument: gm open hi-hat
         subdiv: 8
         notes: |
-          .. .. .. x.
-          .. .. .. x.
-          .. .. .. x.
-          .. .. .. x.
+          .. .. .. X.
+          .. .. .. X.
+          .. .. .. X.
+          .. .. .. X.
 song:
   - {times: 4, pattern: My First Pattern}
