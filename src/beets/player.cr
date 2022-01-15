@@ -4,8 +4,7 @@ require "./drum_kit"
 require "./clock"
 require "./midi_consts"
 
-NANOSECS_PER_SEC = 1_000_000_000
-NOTE_OFF_SPAN    = Time::Span.new(nanoseconds: 3000)
+NOTE_OFF_SPAN = Time::Span.new(nanoseconds: 3_000_000)
 
 class Player
   property song_name : String?
@@ -40,27 +39,19 @@ class Player
             next
           end
 
-          wait_until(t)
+          clock.wait_until(t)
           notes.each { |note| @output_stream.write_short(on_status, unaccented(note), velocity(note)) }
-          wait_until(t + NOTE_OFF_SPAN)
+          clock.wait_until(t + NOTE_OFF_SPAN)
           notes.each { |note| @output_stream.write_short(off_status, unaccented(note), 0) }
 
           t += clock.bpm_tick_span
         end
 
         # Wait for end of full length of pattern
-        wait_until(start_nanosecs + @clock.bpm_tick_span * pattern.ticks_length)
+        clock.wait_until(start_nanosecs + @clock.bpm_tick_span * pattern.ticks_length)
       end
     end
     clock.stop if @output_clock
-  end
-
-  def wait_until(goal_time : Time::Span)
-    now = Time.monotonic
-    while now < goal_time
-      sleep(@clock.bpm_tick_span)
-      now = Time.monotonic
-    end
   end
 
   def accented(note_num)
