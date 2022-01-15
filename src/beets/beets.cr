@@ -51,9 +51,9 @@ class Beets
     parser = OptionParser.parse do |parser|
       parser.banner = "usage: beets [arguments] [file]"
       parser.on("-l", "--list-devices", "List MIDI devices") { @options.list_devices = true }
-      parser.on("-o", "--output", "Output MIDI device name or id") { |arg| @options.device_name_or_id = arg }
-      parser.on("-c", "--channel", "Output MIDI channel") { |arg| @options.channel = arg.to_u8 - 1 }
-      parser.on("-b", "--bpm", "Beats per minute") { |arg| @options.bpm = arg.to_f64 }
+      parser.on("-o DEVICE", "--output DEVICE", "Output MIDI device name or id") { |arg| @options.device_name_or_id = arg }
+      parser.on("-c CHAN", "--channel CHAN", "Output MIDI channel") { |arg| @options.channel = arg.to_u8 - 1 }
+      parser.on("-b BPM", "--bpm BPM", "Beats per minute") { |arg| @options.bpm = arg.to_f64 }
       parser.on("-d", "--debug", "Debug output") { @options.debug = true }
       parser.on("-h", "--help", "Show this help") do
         help(parser)

@@ -108,11 +108,15 @@ class Loader
     devices = (0...PortMIDI.count_devices)
       .map { |i| PortMIDI.get_device_info(i) }
     name = name.downcase
-    name_matches = devices.dup.select! { |dev| dev.name.downcase == name }
-    if name_matches.size == 1
-      return OutputStream.open(devices.index(name_matches[0]).as(Int32))
+    found = devices.dup.find do |dev|
+      dev.output? && dev.name.downcase == name
     end
-    raise "error: no PortMIDI device named #{name}"
+    if found
+      return OutputStream.open(devices.index(found).as(Int32))
+    else
+      num = name.to_i
+      return OutputStream.open(num)
+    end
   end
 
   protected def output_stream_from(name_or_id : YAML::Any) : OutputStream
