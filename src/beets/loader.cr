@@ -81,16 +81,17 @@ class Loader
         note_num = player.instrument_note_number(part["instrument"].as_s)
         val = part["subdiv"]?
         subdiv = val ? val.as_i : 4
-        load_notes(pattern, subdiv, note_num, part["notes"].as_s)
+        load_notes(pattern, part, subdiv, note_num, part["notes"].as_s)
       end
     end
   end
 
-  private def load_notes(pattern, subdiv, note_num, notes)
+  private def load_notes(pattern, part, subdiv, note_num, notes)
     # FIXME 4 should be num beats per measure, I think
     ticks = ((4.0 / subdiv) * TICKS_PER_BEAT).to_i
     offset = 0
     notes.gsub(/[^\.x]/, "").each_char do |note|
+      raise "pattern #{pattern.name} part #{part["instrument"]} has too many notes" if offset >= pattern.ticks_length
       pattern.notes[offset] << note_num if note == 'x'
       offset += ticks
     end

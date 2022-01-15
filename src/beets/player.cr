@@ -12,11 +12,13 @@ class Pattern
   property notes : Array(Array(UInt8))
 
   def initialize(@name, @num_bars)
+    # FIXME use @time_signature
     # FIXME hard-coded number of beats per bar
     @notes = Array.new(ticks_length) { |a| a = [] of UInt8 }
   end
 
   def ticks_length
+    # FIXME should not hard-code 4 beats per measure
     @num_bars * 4 * TICKS_PER_BEAT
   end
 end
