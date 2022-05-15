@@ -5,6 +5,7 @@ channel: 10
 device: MidiPipe Input 1
 bank: {msb: 1}
 program: 10
+transpose: 12
 clock: off
 instruments:
   - {name: bass drum, note: 36}

@@ -22,6 +22,9 @@ class Loader
     val = yaml["clock"]?
     @player.output_clock = val.as_bool if val
 
+    val = yaml["transpose"]?
+    @player.transpose = val.as_i if val
+
     instruments = yaml["instruments"]?
     if instruments
       kit = @player.drum_kit

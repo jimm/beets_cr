@@ -36,7 +36,7 @@ end
 
 describe Loader do
   it "loads the simple example properly" do
-    player = TestLoader.new.load(TESTFILE, nil, nil, nil)
+    player = TestLoader.new.load(TESTFILE, nil, nil, nil, 0)
     player.song_name.should eq "Test File"
     player.clock.bpm.should eq 86.8
     player.channel.should eq 1
@@ -44,6 +44,7 @@ describe Loader do
     player.bank_lsb.should be_nil
     player.program.should eq 10
     player.output_clock.should be_true
+    player.transpose.should eq 12
     player.drum_kit.instruments["bass drum"].should eq 36
 
     player.patterns.size.should eq 1
@@ -73,7 +74,7 @@ describe Loader do
     File.write(tmpfile.path, YAML.dump(yaml))
     tmpfile.rewind
 
-    player = TestLoader.new.load(tmpfile.path, nil, nil, nil)
+    player = TestLoader.new.load(tmpfile.path, nil, nil, nil, 0)
     player.clock.bpm.should eq 120.0
     player.channel.should eq DEFAULT_DRUM_CHANNEL
     player.bank_msb.should be_nil
@@ -85,7 +86,7 @@ describe Loader do
   end
 
   it "uses overrides passed in to load" do
-    player = TestLoader.new.load(TESTFILE, nil, 3, nil)
+    player = TestLoader.new.load(TESTFILE, nil, 3, nil, 0)
     player.channel.should eq 3
     player.clock.bpm.should eq 86.8
   end

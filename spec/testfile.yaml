@@ -6,6 +6,7 @@ device: MidiPipe Input 1
 bank: {msb: 1}
 program: 10
 clock: on
+transpose: 12
 instruments:
   - {name: bass drum, note: 36}
   - {name: snare, note: 38}
@@ -28,14 +29,14 @@ patterns:
           .... x... .... x.xx
           .... x... .... x...
           .... x... .... x.xx
-      - instrument: gm closed hi-hat
+      - instrument: closed hi-hat
         subdiv: 8
         notes: |
           Xx Xx Xx .x
           Xx Xx Xx .x
           Xx Xx Xx .x
           Xx Xx Xx .x
-      - instrument: gm open hi-hat
+      - instrument: open hi-hat
         subdiv: 8
         notes: |
           .. .. .. X.
