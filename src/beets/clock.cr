@@ -1,6 +1,8 @@
 require "./midi_consts"
 
 class Clock
+  NANOSECS_PER_SEC = 1_000_000_000
+
   property bpm : Float64 = 120.0
   property running = false
 

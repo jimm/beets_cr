@@ -87,16 +87,17 @@ class Loader
         note_num = @player.drum_kit.instrument_note_number(part["instrument"].as_s)
         val = part["subdiv"]?
         subdiv = val ? val.as_i : 4
-        load_notes(pattern, subdiv, note_num, part["notes"].as_s)
+        load_notes(pattern, part, subdiv, note_num, part["notes"].as_s)
       end
     end
   end
 
-  private def load_notes(pattern, subdiv, note_num, notes)
+  private def load_notes(pattern, part, subdiv, note_num, notes)
     # FIXME 4 should be num beats per measure, I think
     ticks = ((4.0 / subdiv) * TICKS_PER_BEAT).to_i
     offset = 0
     notes.gsub(/[^\.xX]/, "").each_char do |note|
+      raise "pattern #{pattern.name} part #{part["instrument"]} has too many notes" if offset >= pattern.ticks_length
       case note
       when 'x'
         pattern.notes[offset] << @player.unaccented(note_num)
@@ -128,11 +129,15 @@ class Loader
     devices = (0...PortMIDI.count_devices)
       .map { |i| PortMIDI.get_device_info(i) }
     name = name.downcase
-    name_matches = devices.dup.select! { |dev| dev.name.downcase == name }
-    if name_matches.size == 1
-      return output_stream_from(devices.index(name_matches[0]).as(Int32))
+    found = devices.dup.find do |dev|
+      dev.output? && dev.name.downcase == name
     end
-    raise "error: no PortMIDI device named #{name}"
+    if found
+      return OutputStream.open(devices.index(found).as(Int32))
+    else
+      num = name.to_i
+      return OutputStream.open(num)
+    end
   end
 
   protected def output_stream_from(name_or_id : YAML::Any) : OutputStream
