@@ -7,6 +7,7 @@ class Clock
   def initialize(@output_stream : OutputStream)
     @prev_bpm = 0.0
     @tick_span = Time::Span.new(nanoseconds: 0_i64)
+    @half_tick_span = Time::Span.new(nanoseconds: 0_i64)
   end
 
   def start
@@ -28,7 +29,7 @@ class Clock
   def wait_until(goal_time : Time::Span)
     now = Time.monotonic
     while now < goal_time
-      sleep(bpm_tick_span())
+      sleep(@half_tick_span)
       now = Time.monotonic
     end
   end
@@ -36,6 +37,7 @@ class Clock
   def bpm_tick_span
     if @prev_bpm != @bpm
       @tick_span = Time::Span.new(nanoseconds: (NANOSECS_PER_SEC / (@bpm * TICKS_PER_BEAT / 60.0)).to_i64)
+      @half_tick_span = Time::Span.new(nanoseconds: (NANOSECS_PER_SEC / (@bpm * TICKS_PER_BEAT / 120.0)).to_i64)
       @prev_bpm = @bpm
     end
     @tick_span

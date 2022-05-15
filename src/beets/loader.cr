@@ -9,7 +9,7 @@ class Loader
   end
 
   # Parses `path` and returns a Player.
-  def load(path : String, device_name_or_id : String?, channel : UInt8?, bpm : Float64?)
+  def load(path : String, device_name_or_id : String?, channel : UInt8?, bpm : Float64?, transpose : Int32)
     yaml = File.open(path) { |file| YAML.parse(file) }
 
     @player = Player.new(output_stream_from(device_name_or_id || yaml["device"]))
@@ -17,6 +17,7 @@ class Loader
     @player.clock.bpm = load_bpm(yaml, bpm)
     @player.channel = load_channel(yaml, channel)
     @player.bank_msb, @player.bank_lsb, @player.program = *load_bank_and_pc(yaml)
+    @player.transpose = transpose
 
     val = yaml["clock"]?
     @player.output_clock = val.as_bool if val

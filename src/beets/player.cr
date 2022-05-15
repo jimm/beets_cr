@@ -13,6 +13,7 @@ class Player
   property bank_msb : UInt8?
   property bank_lsb : UInt8?
   property program : UInt8??
+  property transpose : Int32 = 0
   property output_clock : Bool = false
   property drum_kit : DrumKit = DrumKit.new
   property patterns : Array(Pattern) = [] of Pattern
@@ -41,9 +42,13 @@ class Player
           end
 
           wait_until(t)
-          notes.each { |note| @output_stream.write_short(on_status, unaccented(note), velocity(note)) }
+          notes.each do |note|
+            @output_stream.write_short(on_status, unaccented(note + @transpose), velocity(note + @transpose))
+          end
           wait_until(t + NOTE_OFF_SPAN)
-          notes.each { |note| @output_stream.write_short(off_status, unaccented(note), 0) }
+          notes.each do |note|
+            @output_stream.write_short(off_status, unaccented(note + @transpose), 0)
+          end
 
           t += clock.bpm_tick_span
         end

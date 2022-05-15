@@ -28,14 +28,14 @@ patterns:
           .... x... .... x.xx
           .... x... .... x...
           .... x... .... x.xx
-      - instrument: gm closed hi-hat
+      - instrument: closed hi-hat
         subdiv: 16
         notes: |
           XxXx XxXx XxXx .xXx 
           XxXx XxXx XxXx .xXx 
           XxXx XxXx XxXx .xXx 
           XxXx XxXx XxXx .xXx 
-      - instrument: gm open hi-hat
+      - instrument: open hi-hat
         subdiv: 8
         notes: |
           .. .. .. X.

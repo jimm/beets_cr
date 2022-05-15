@@ -9,6 +9,7 @@ class Options
   property device_name_or_id : String?
   property channel : UInt8?
   property bpm : Float64?
+  property transpose : Int32 = 0
   property beets_path : String = ""
   property debug : Bool = false
 end
@@ -43,7 +44,8 @@ class Beets
     if !File.exists?(@options.beets_path)
       raise "error: file #{@options.beets_path} does not exist"
     end
-    player = Loader.new.load(@options.beets_path, @options.device_name_or_id, @options.channel, @options.bpm)
+    player = Loader.new.load(@options.beets_path, @options.device_name_or_id,
+      @options.channel, @options.bpm, @options.transpose)
     player.play
   end
 
@@ -63,6 +65,8 @@ class Beets
       }
       parser.on("-b BPM", "--bpm=BPM",
         "Beats per minute") { |arg| @options.bpm = arg.to_f64 }
+      parser.on("-t TRANSPOSE", "--transpose=TRANSPOSE",
+        "Transpose by (half steps)") { |arg| @options.transpose = arg.to_i }
       parser.on("-d", "--debug", "Debug output") { @options.debug = true }
       parser.on("-h", "--help", "Show this help") do
         help(parser)
