@@ -24,10 +24,12 @@ class Player
   end
 
   def play
+    puts("play: @transpose = #{@transpose}") # DEBUG
     on_status = NOTE_ON + channel
     off_status = NOTE_OFF + channel
+    nowait = clock.half_tick_span >= NOTE_OFF_SPAN
 
-    clock.start if @output_clock
+    @clock.start if @output_clock
     chunks.each do |chunk|
       pattern = chunk.pattern
       chunk.play_times.times do |_|
@@ -36,42 +38,30 @@ class Player
         t = start_nanosecs
         pattern.notes.each do |notes|
           if notes.empty?
-            t += clock.bpm_tick_span
+            t += @clock.bpm_tick_span
             next
           end
 
-          clock.wait_until(t)
+          @clock.wait_until(t)
           notes.each do |note|
-            @output_stream.write_short(on_status, unaccented(note + @transpose), velocity(note + @transpose))
+            @output_stream.write_short(
+              on_status, Pattern.unaccented(note + @transpose), Pattern.velocity(note + @transpose)
+            )
           end
-          clock.wait_until(t + NOTE_OFF_SPAN)
+          @clock.wait_until(t + NOTE_OFF_SPAN) unless nowait
           notes.each do |note|
-            @output_stream.write_short(off_status, unaccented(note + @transpose), 0)
+            @output_stream.write_short(
+              off_status, Pattern.unaccented(note + @transpose), 0
+            )
           end
 
-          t += clock.bpm_tick_span
+          t += @clock.bpm_tick_span
         end
 
         # Wait for end of full length of pattern
-        clock.wait_until(start_nanosecs + @clock.bpm_tick_span * pattern.ticks_length)
+        @clock.wait_until(start_nanosecs + @clock.bpm_tick_span * pattern.ticks_length)
       end
     end
-    clock.stop if @output_clock
-  end
-
-  def accented(note_num)
-    note_num | 0x80
-  end
-
-  def unaccented(note_num)
-    note_num & 0x7f
-  end
-
-  def accented?(note_num)
-    (note_num & 0x80) != 0
-  end
-
-  def velocity(note_num)
-    accented?(note_num) ? 0x7f_u8 : 0x50_u8
+    @clock.stop if @output_clock
   end
 end

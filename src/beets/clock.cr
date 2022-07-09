@@ -5,11 +5,12 @@ class Clock
 
   property bpm : Float64 = 120.0
   property running = false
+  getter tick_span = Time::Span.new(nanoseconds: 0_i64)
+  getter half_tick_span = Time::Span.new(nanoseconds: 0_i64)
 
   def initialize(@output_stream : OutputStream)
     @prev_bpm = 0.0
-    @tick_span = Time::Span.new(nanoseconds: 0_i64)
-    @half_tick_span = Time::Span.new(nanoseconds: 0_i64)
+    @tick_span
   end
 
   def start

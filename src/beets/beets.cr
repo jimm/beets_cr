@@ -9,7 +9,7 @@ class Options
   property device_name_or_id : String?
   property channel : UInt8?
   property bpm : Float64?
-  property transpose : Int32 = 0
+  property transpose : Int32?
   property beets_path : String = ""
   property debug : Bool = false
 end

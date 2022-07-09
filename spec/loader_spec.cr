@@ -36,7 +36,7 @@ end
 
 describe Loader do
   it "loads the simple example properly" do
-    player = TestLoader.new.load(TESTFILE, nil, nil, nil, 0)
+    player = TestLoader.new.load(TESTFILE, nil, nil, nil, nil)
     player.song_name.should eq "Test File"
     player.clock.bpm.should eq 86.8
     player.channel.should eq 1

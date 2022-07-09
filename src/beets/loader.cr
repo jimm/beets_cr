@@ -9,7 +9,7 @@ class Loader
   end
 
   # Parses `path` and returns a Player.
-  def load(path : String, device_name_or_id : String?, channel : UInt8?, bpm : Float64?, transpose : Int32)
+  def load(path : String, device_name_or_id : String?, channel : UInt8?, bpm : Float64?, transpose : Int32?)
     yaml = File.open(path) { |file| YAML.parse(file) }
 
     @player = Player.new(output_stream_from(device_name_or_id || yaml["device"]))
@@ -17,13 +17,11 @@ class Loader
     @player.clock.bpm = load_bpm(yaml, bpm)
     @player.channel = load_channel(yaml, channel)
     @player.bank_msb, @player.bank_lsb, @player.program = *load_bank_and_pc(yaml)
-    @player.transpose = transpose
 
     val = yaml["clock"]?
     @player.output_clock = val.as_bool if val
 
-    val = yaml["transpose"]?
-    @player.transpose = val.as_i if val
+    @player.transpose = load_transpose(yaml, transpose)
 
     instruments = yaml["instruments"]?
     if instruments
@@ -74,6 +72,13 @@ class Loader
     {msb, lsb, pc}
   end
 
+  private def load_transpose(yaml, transpose)
+    return transpose if transpose
+
+    val = yaml["transpose"]?
+    val ? val.as_i : 0
+  end
+
   private def load_patterns(patterns : Array(YAML::Any))
     patterns.each do |pat|
       pattern = Pattern.new(pat["name"].to_s, pat["bars"].as_i)
@@ -103,9 +108,9 @@ class Loader
       raise "pattern #{pattern.name} part #{part["instrument"]} has too many notes" if offset >= pattern.ticks_length
       case note
       when 'x'
-        pattern.notes[offset] << @player.unaccented(note_num)
+        pattern.notes[offset] << Pattern.unaccented(note_num)
       when 'X'
-        pattern.notes[offset] << @player.accented(note_num)
+        pattern.notes[offset] << Pattern.accented(note_num)
       end
       offset += ticks
     end
